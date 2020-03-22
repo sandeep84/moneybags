@@ -25,11 +25,19 @@ dependencies:
   cupertino_icons: ^0.1.2
 
   file_picker: ^1.4.2
+  tree_view: any
   sqflite: any
+  shared_preferences: any
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  flutter_launcher_icons: "^0.7.5"
+
+flutter_icons:
+  image_path: "assets/icons/cash.png" 
+  android: true
 
 
 # For information on the generic Dart part of this file, see the
