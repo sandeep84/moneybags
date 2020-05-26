@@ -25,17 +25,17 @@ class _AccountSummaryState extends State<AccountSummary> {
   }
 
   Future<void> openDatabase() async {
-    if (_book.isOpen)
-      return;
+    if (_book.isOpen) return;
 
     // if _database is null we instantiate it
     final prefs = await SharedPreferences.getInstance();
     _path = prefs.getString('gnc_local_file_path');
 
-    if (_path == null)
-      _path = await _openFileExplorer();
+    if (_path == null) _path = await _openFileExplorer();
 
-    setState(() { _book.open(_path); });
+    setState(() {
+      _book.open(_path);
+    });
   }
 
   Future<String> _openFileExplorer() async {
@@ -43,7 +43,7 @@ class _AccountSummaryState extends State<AccountSummary> {
     _book.close();
 
     try {
-      _path = await FilePicker.getFilePath(type: FileType.any, fileExtension: '');
+      _path = await FilePicker.getFilePath(type: FileType.any);
     } on PlatformException catch (e) {
       print("Unsupported operation" + e.toString());
     }
@@ -70,30 +70,30 @@ class _AccountSummaryState extends State<AccountSummary> {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-        home: new Scaffold(
-            appBar: new AppBar(
-                title: const Text('Accounts'),
-            ),
-            body: FutureBuilder<List<GncAccount>>(
-                future: accountSummary,
-                builder: (BuildContext context, AsyncSnapshot<List<GncAccount>> snapshot) {
-                  if (snapshot.hasData) {
-                    return ListView.builder(
-                        itemBuilder: (BuildContext context, int index) => 
-                        AccountWidget(snapshot.data[index], context),
-                        itemCount: snapshot.data.length
-                    );
-                  } else {
-                    print("Spinner");
-                    return Center(child: CircularProgressIndicator());
-                  }
-                },
-            ),
-            floatingActionButton: FloatingActionButton(
-                onPressed: _openFileExplorer,
-                child: Icon(Icons.folder_open),
-            ),
+      home: new Scaffold(
+        appBar: new AppBar(
+          title: const Text('Accounts'),
         ),
+        body: FutureBuilder<List<GncAccount>>(
+          future: accountSummary,
+          builder:
+              (BuildContext context, AsyncSnapshot<List<GncAccount>> snapshot) {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                  itemBuilder: (BuildContext context, int index) =>
+                      AccountWidget(snapshot.data[index], context),
+                  itemCount: snapshot.data.length);
+            } else {
+              print("Spinner");
+              return Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _openFileExplorer,
+          child: Icon(Icons.folder_open),
+        ),
+      ),
     );
   }
 }
@@ -112,19 +112,19 @@ class AccountWidget extends StatelessWidget {
         subtitle = Text(account.commodity.format(account.get_quantity()));
       }
       return ListTile(
-            leading: Text(""),      // Needed for alignment
-            title: Text(account.name),
-            subtitle: subtitle,
-            trailing: Text(account.baseCurrency.format(account.get_balance())),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => AccountDetailScreen(account: account),
-                  ),
-              );
-            },
-            );
+        leading: Text(""), // Needed for alignment
+        title: Text(account.name),
+        subtitle: subtitle,
+        trailing: Text(account.baseCurrency.format(account.get_balance())),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AccountDetailScreen(account: account),
+            ),
+          );
+        },
+      );
     }
     return AccountExpansionTile(
       key: PageStorageKey<GncAccount>(account),

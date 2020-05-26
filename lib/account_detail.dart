@@ -16,16 +16,17 @@ class AccountDetailScreen extends StatelessWidget {
         title: Text(account.name),
       ),
       body: ListView.builder(
-                itemCount: account.splits.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                      title: Text(account.splits[index].description),
-                      subtitle: Text(DateFormat.yMd().format(DateTime.parse(account.splits[index].date))),
-                      trailing: Text(account.commodity.format(account.splits[index].quantity)),
-                  );
-                },
+        itemCount: account.splits.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(account.splits[index].description),
+            subtitle: Text(DateFormat.yMd()
+                .format(DateTime.parse(account.splits[index].date))),
+            trailing:
+                Text(account.commodity.format(account.splits[index].quantity)),
+          );
+        },
       ),
     );
   }
 }
-
