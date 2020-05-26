@@ -29,7 +29,7 @@ dependencies:
   shared_preferences: ^0.5.7+1
   intl: ^0.16.1
 
-  dartcash: ^1.0.0
+  dartcash: ^1.0.1
 
 dev_dependencies:
   flutter_test:

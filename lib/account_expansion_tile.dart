@@ -19,7 +19,7 @@ const Duration _kExpand = Duration(milliseconds: 200);
 /// This widget is typically used with [ListView] to create an
 /// "expand / collapse" list entry. When used with scrolling widgets like
 /// [ListView], a unique [PageStorageKey] must be specified to enable the
-/// [accountExpansionTile] to save and restore its expanded state when it is scrolled
+/// [AccountExpansionTile] to save and restore its expanded state when it is scrolled
 /// in and out of view.
 ///
 /// See also:
@@ -28,11 +28,11 @@ const Duration _kExpand = Duration(milliseconds: 200);
 ///    expansion tile represents a sublist.
 ///  * The "Expand/collapse" section of
 ///    <https://material.io/guidelines/components/lists-controls.html>.
-class accountExpansionTile extends StatefulWidget {
+class AccountExpansionTile extends StatefulWidget {
   /// Creates a single-line [ListTile] with a trailing button that expands or collapses
   /// the tile to reveal or hide the [children]. The [initiallyExpanded] property must
   /// be non-null.
-  const accountExpansionTile({
+  const AccountExpansionTile({
     Key key,
     this.leading,
     @required this.title,
@@ -82,10 +82,10 @@ class accountExpansionTile extends StatefulWidget {
   final bool initiallyExpanded;
 
   @override
-  _accountExpansionTileState createState() => _accountExpansionTileState();
+  _AccountExpansionTileState createState() => _AccountExpansionTileState();
 }
 
-class _accountExpansionTileState extends State<accountExpansionTile> with SingleTickerProviderStateMixin {
+class _AccountExpansionTileState extends State<AccountExpansionTile> with SingleTickerProviderStateMixin {
   static final Animatable<double> _easeOutTween = CurveTween(curve: Curves.easeOut);
   static final Animatable<double> _easeInTween = CurveTween(curve: Curves.easeIn);
   static final Animatable<double> _halfTween = Tween<double>(begin: 0.0, end: 0.25);

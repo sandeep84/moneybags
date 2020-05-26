@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dartcash/gnc_book.dart';
 import 'package:dartcash/gnc_account.dart';
 
-import 'accountExpansionTile.dart';
+import 'account_expansion_tile.dart';
 import 'account_detail.dart';
 
 class AccountSummary extends StatefulWidget {
@@ -16,7 +16,7 @@ class AccountSummary extends StatefulWidget {
 }
 
 class _AccountSummaryState extends State<AccountSummary> {
-  String _path = null;
+  String _path;
   GncBook _book = GncBook();
 
   @override
@@ -24,7 +24,7 @@ class _AccountSummaryState extends State<AccountSummary> {
     super.initState();
   }
 
-  void openDatabase() async {
+  Future<void> openDatabase() async {
     if (_book.isOpen)
       return;
 
@@ -105,32 +105,32 @@ class AccountWidget extends StatelessWidget {
   final GncAccount entry;
   final BuildContext context;
 
-  Widget _buildTiles(GncAccount root) {
-    if (root.children.isEmpty) {
-      var subtitle = null;
-      if (root.commodity.guid != root.baseCurrency.guid) {
-        subtitle = Text(root.getQuantityAsString());
+  Widget _buildTiles(GncAccount account) {
+    if (account.children.isEmpty) {
+      var subtitle;
+      if (account.commodity.guid != account.baseCurrency.guid) {
+        subtitle = Text(account.commodity.format(account.get_quantity()));
       }
       return ListTile(
             leading: Text(""),      // Needed for alignment
-            title: Text(root.name),
+            title: Text(account.name),
             subtitle: subtitle,
-            trailing: Text(root.getBalanceAsString()),
+            trailing: Text(account.baseCurrency.format(account.get_balance())),
             onTap: () {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => AccountDetailScreen(account: root),
+                      builder: (context) => AccountDetailScreen(account: account),
                   ),
               );
             },
             );
     }
-    return accountExpansionTile(
-      key: PageStorageKey<GncAccount>(root),
-      title: Text(root.name),
-      trailing: Text(root.getBalanceAsString()),
-      children: root.children.map(_buildTiles).toList(),
+    return AccountExpansionTile(
+      key: PageStorageKey<GncAccount>(account),
+      title: Text(account.name),
+      trailing: Text(account.baseCurrency.format(account.get_balance())),
+      children: account.children.map(_buildTiles).toList(),
     );
   }
 
