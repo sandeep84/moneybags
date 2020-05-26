@@ -1,4 +1,4 @@
-package com.example.gcashview;
+package com.example.Moneybags;
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity;
