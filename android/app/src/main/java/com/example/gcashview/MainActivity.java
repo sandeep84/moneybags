@@ -1,4 +1,4 @@
-package com.example.Moneybags;
+package com.sandeep84.moneybags;
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity;

@@ -42,8 +42,8 @@ class AccountExpansionTile extends StatefulWidget {
     this.children = const <Widget>[],
     this.trailing,
     this.initiallyExpanded = false,
-  }) : assert(initiallyExpanded != null),
-       super(key: key);
+  })  : assert(initiallyExpanded != null),
+        super(key: key);
 
   /// A widget to display before the title.
   ///
@@ -85,10 +85,14 @@ class AccountExpansionTile extends StatefulWidget {
   _AccountExpansionTileState createState() => _AccountExpansionTileState();
 }
 
-class _AccountExpansionTileState extends State<AccountExpansionTile> with SingleTickerProviderStateMixin {
-  static final Animatable<double> _easeOutTween = CurveTween(curve: Curves.easeOut);
-  static final Animatable<double> _easeInTween = CurveTween(curve: Curves.easeIn);
-  static final Animatable<double> _halfTween = Tween<double>(begin: 0.0, end: 0.25);
+class _AccountExpansionTileState extends State<AccountExpansionTile>
+    with SingleTickerProviderStateMixin {
+  static final Animatable<double> _easeOutTween =
+      CurveTween(curve: Curves.easeOut);
+  static final Animatable<double> _easeInTween =
+      CurveTween(curve: Curves.easeIn);
+  static final Animatable<double> _halfTween =
+      Tween<double>(begin: 0.0, end: 0.25);
 
   final ColorTween _borderColorTween = ColorTween();
   final ColorTween _headerColorTween = ColorTween();
@@ -114,11 +118,12 @@ class _AccountExpansionTileState extends State<AccountExpansionTile> with Single
     _borderColor = _controller.drive(_borderColorTween.chain(_easeOutTween));
     _headerColor = _controller.drive(_headerColorTween.chain(_easeInTween));
     _iconColor = _controller.drive(_iconColorTween.chain(_easeInTween));
-    _backgroundColor = _controller.drive(_backgroundColorTween.chain(_easeOutTween));
+    _backgroundColor =
+        _controller.drive(_backgroundColorTween.chain(_easeOutTween));
 
-    _isExpanded = PageStorage.of(context)?.readState(context) as bool ?? widget.initiallyExpanded;
-    if (_isExpanded)
-      _controller.value = 1.0;
+    _isExpanded = PageStorage.of(context)?.readState(context) as bool ??
+        widget.initiallyExpanded;
+    if (_isExpanded) _controller.value = 1.0;
   }
 
   @override
@@ -134,8 +139,7 @@ class _AccountExpansionTileState extends State<AccountExpansionTile> with Single
         _controller.forward();
       } else {
         _controller.reverse().then<void>((void value) {
-          if (!mounted)
-            return;
+          if (!mounted) return;
           setState(() {
             // Rebuild without widget.children.
           });
@@ -166,10 +170,11 @@ class _AccountExpansionTileState extends State<AccountExpansionTile> with Single
             textColor: _headerColor.value,
             child: ListTile(
               onTap: _handleTap,
-              leading: widget.leading ?? RotationTransition(
-                turns: _iconTurns,
-                child: const Icon(Icons.arrow_right),
-              ),
+              leading: widget.leading ??
+                  RotationTransition(
+                    turns: _iconTurns,
+                    child: const Icon(Icons.arrow_right),
+                  ),
               title: widget.title,
               subtitle: widget.subtitle,
               trailing: widget.trailing,
@@ -208,6 +213,5 @@ class _AccountExpansionTileState extends State<AccountExpansionTile> with Single
       builder: _buildChildren,
       child: closed ? null : Column(children: widget.children),
     );
-
   }
 }
