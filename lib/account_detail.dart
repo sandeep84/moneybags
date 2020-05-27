@@ -22,8 +22,13 @@ class AccountDetailScreen extends StatelessWidget {
             title: Text(account.splits[index].description),
             subtitle: Text(DateFormat.yMd()
                 .format(DateTime.parse(account.splits[index].date))),
-            trailing:
-                Text(account.commodity.format(account.splits[index].quantity)),
+            trailing: Text(
+              account.commodity
+                  .format(account.splits[index].quantity * account.sign),
+              style: account.splits[index].quantity < 0
+                  ? TextStyle(color: Colors.red)
+                  : null,
+            ),
           );
         },
       ),

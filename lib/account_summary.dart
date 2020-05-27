@@ -18,29 +18,27 @@ class AccountSummary extends StatefulWidget {
 class _AccountSummaryState extends State<AccountSummary> {
   String _path;
   GncBook _book = GncBook();
+  List<GncAccount> accountList = [];
 
   @override
   void initState() {
     super.initState();
+    openDatabase();
   }
 
-  Future<void> openDatabase() async {
-    if (_book.isOpen) return;
-
-    // if _database is null we instantiate it
-    final prefs = await SharedPreferences.getInstance();
-    _path = prefs.getString('gnc_local_file_path');
-
-    if (_path == null) _path = await _openFileExplorer();
-
-    setState(() {
-      _book.open(_path);
-    });
+  @override
+  void dispose() {
+    _book.close();
+    accountList = [];
+    super.dispose();
   }
 
-  Future<String> _openFileExplorer() async {
+  Future<void> _openFileExplorer() async {
     print("Called _openFileExplorer");
     _book.close();
+    setState(() {
+      accountList = [];
+    });
 
     try {
       _path = await FilePicker.getFilePath(type: FileType.any);
@@ -57,14 +55,28 @@ class _AccountSummaryState extends State<AccountSummary> {
       final prefs = await SharedPreferences.getInstance();
       prefs.setString('gnc_local_file_path', _path);
     }
-
-    print("Returning path: " + _path);
-    return _path;
   }
 
-  Future<List<GncAccount>> get accountSummary async {
-    await openDatabase();
-    return _book.accounts();
+  Future<void> openDatabase() async {
+    if (_book.isOpen) return;
+
+    // if _database is null we instantiate it
+    final prefs = await SharedPreferences.getInstance();
+    _path = prefs.getString('gnc_local_file_path');
+    if (_path == null) await _openFileExplorer();
+
+    await _book.open(_path);
+    setState(() {
+      accountList = _book.accounts();
+    });
+  }
+
+  Future<void> reopenDatabase() async {
+    setState(() {
+      accountList = [];
+    });
+    _openFileExplorer();
+    openDatabase();
   }
 
   @override
@@ -74,23 +86,13 @@ class _AccountSummaryState extends State<AccountSummary> {
         appBar: new AppBar(
           title: const Text('Accounts'),
         ),
-        body: FutureBuilder<List<GncAccount>>(
-          future: accountSummary,
-          builder:
-              (BuildContext context, AsyncSnapshot<List<GncAccount>> snapshot) {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                  itemBuilder: (BuildContext context, int index) =>
-                      AccountWidget(snapshot.data[index], context),
-                  itemCount: snapshot.data.length);
-            } else {
-              print("Spinner");
-              return Center(child: CircularProgressIndicator());
-            }
-          },
+        body: ListView.builder(
+          itemCount: accountList.length,
+          itemBuilder: (context, index) =>
+              AccountWidget(accountList[index], context),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: _openFileExplorer,
+          onPressed: reopenDatabase,
           child: Icon(Icons.folder_open),
         ),
       ),
