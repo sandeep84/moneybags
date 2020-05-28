@@ -14,11 +14,12 @@ dependencies:
   cupertino_icons: ^0.1.2
 
   file_picker: ^1.9.0+1
-  tree_view: ^0.0.5
   shared_preferences: ^0.5.7+1
   intl: ^0.16.1
+  charts_flutter: ^0.9.0
 
-  dartcash: ^1.1.0
+  dartcash: 
+    path: ../dartcash
 
 dev_dependencies:
   flutter_test:
@@ -46,6 +47,9 @@ flutter:
   # assets:
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg
+
+  assets:
+    - assets/images/drawer_header.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

@@ -10,6 +10,11 @@ import 'package:dartcash/gnc_account.dart';
 import 'account_expansion_tile.dart';
 import 'account_detail.dart';
 
+import 'expense_report.dart';
+import 'expense_bar_chart.dart';
+
+import 'license.dart';
+
 class AccountSummary extends StatefulWidget {
   @override
   _AccountSummaryState createState() => new _AccountSummaryState();
@@ -81,19 +86,75 @@ class _AccountSummaryState extends State<AccountSummary> {
 
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
-      home: new Scaffold(
-        appBar: new AppBar(
-          title: const Text('Accounts'),
-        ),
-        body: ListView.builder(
-          itemCount: accountList.length,
-          itemBuilder: (context, index) =>
-              AccountWidget(accountList[index], context),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: reopenDatabase,
-          child: Icon(Icons.folder_open),
+    return new Scaffold(
+      appBar: new AppBar(
+        title: const Text('Accounts'),
+      ),
+      body: ListView.builder(
+        itemCount: accountList.length,
+        itemBuilder: (context, index) =>
+            AccountWidget(accountList[index], context),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage("assets/images/drawer_header.jpg"),
+                      fit: BoxFit.cover)),
+              child: Text("Moneybags"),
+            ),
+            ListTile(
+              title: Text('Select file'),
+              onTap: () {
+                reopenDatabase();
+                Navigator.pop(context);
+              },
+            ),
+            ExpansionTile(
+              title: Text('Reports'),
+              children: <Widget>[
+                ListTile(
+                  title: Text('Expenses'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ExpenseReportScreen(book: _book),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  title: Text('Expenses over time'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ExpenseBarChart(book: _book),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+            ListTile(
+              title: Text('Licenses'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LicenseScreen(),
+                  ),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
@@ -108,11 +169,12 @@ class AccountWidget extends StatelessWidget {
   final BuildContext context;
 
   Widget _buildTiles(GncAccount account) {
+    var subtitle;
+    if (account.commodity.guid != account.baseCurrency.guid) {
+      subtitle = Text(account.commodity
+          .format(account.get_balance(reportCommodity: account.commodity)));
+    }
     if (account.children.isEmpty) {
-      var subtitle;
-      if (account.commodity.guid != account.baseCurrency.guid) {
-        subtitle = Text(account.commodity.format(account.get_quantity()));
-      }
       return ListTile(
         leading: Text(""), // Needed for alignment
         title: Text(account.name),
@@ -131,6 +193,7 @@ class AccountWidget extends StatelessWidget {
     return AccountExpansionTile(
       key: PageStorageKey<GncAccount>(account),
       title: Text(account.name),
+      subtitle: subtitle,
       trailing: Text(account.baseCurrency.format(account.get_balance())),
       children: account.children.map(_buildTiles).toList(),
     );
