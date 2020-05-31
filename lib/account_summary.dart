@@ -172,14 +172,14 @@ class AccountWidget extends StatelessWidget {
     var subtitle;
     if (account.commodity.guid != account.baseCurrency.guid) {
       subtitle = Text(account.commodity
-          .format(account.get_balance(reportCommodity: account.commodity)));
+          .format(account.getBalance(reportCommodity: account.commodity)));
     }
     if (account.children.isEmpty) {
       return ListTile(
         leading: Text(""), // Needed for alignment
         title: Text(account.name),
         subtitle: subtitle,
-        trailing: Text(account.baseCurrency.format(account.get_balance())),
+        trailing: Text(account.baseCurrency.format(account.getBalance())),
         onTap: () {
           Navigator.push(
             context,
@@ -194,7 +194,7 @@ class AccountWidget extends StatelessWidget {
       key: PageStorageKey<GncAccount>(account),
       title: Text(account.name),
       subtitle: subtitle,
-      trailing: Text(account.baseCurrency.format(account.get_balance())),
+      trailing: Text(account.baseCurrency.format(account.getBalance())),
       children: account.children.map(_buildTiles).toList(),
     );
   }
