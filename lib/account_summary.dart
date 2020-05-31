@@ -90,11 +90,13 @@ class _AccountSummaryState extends State<AccountSummary> {
       appBar: new AppBar(
         title: const Text('Accounts'),
       ),
-      body: ListView.builder(
-        itemCount: accountList.length,
-        itemBuilder: (context, index) =>
-            AccountWidget(accountList[index], context),
-      ),
+      body: (accountList.length == 0)
+          ? Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: accountList.length,
+              itemBuilder: (context, index) =>
+                  AccountWidget(accountList[index], context),
+            ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
