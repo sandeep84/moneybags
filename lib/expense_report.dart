@@ -59,8 +59,8 @@ class _ExpenseReportState extends State<ExpenseReportScreen> {
     setState(() {
       dataMap = accountSummaryByType(
           accountType: 'EXPENSE',
-          startDate: startDate.toString(),
-          endDate: endDate.toString(),
+          startDate: startDate,
+          endDate: endDate,
           reportCommodity: widget.book.baseCurrency,
           rootAccount: widget.book.rootAccount);
 

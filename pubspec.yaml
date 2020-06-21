@@ -14,11 +14,12 @@ dependencies:
   cupertino_icons: ^0.1.2
 
   file_picker: ^1.9.0+1
-  shared_preferences: ^0.5.7+1
+  flutter_secure_storage: ^3.3.3
   intl: ^0.16.1
   charts_flutter: ^0.9.0
 
-  dartcash: ^1.1.1+1
+  dartcash:
+    path: ../dartcash
 
 dev_dependencies:
   flutter_test:

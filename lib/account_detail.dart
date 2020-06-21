@@ -20,8 +20,7 @@ class AccountDetailScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           return ListTile(
             title: Text(account.splits[index].description),
-            subtitle: Text(DateFormat.yMd()
-                .format(DateTime.parse(account.splits[index].date))),
+            subtitle: Text(DateFormat.yMd().format(account.splits[index].date)),
             trailing: Text(
               account.commodity
                   .format(account.splits[index].quantity * account.sign),

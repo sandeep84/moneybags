@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
-import 'package:file_picker/file_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:dartcash/gnc_book.dart';
 import 'package:dartcash/gnc_account.dart';
 
+import 'package:moneybags/database_selector.dart';
 import 'account_expansion_tile.dart';
 import 'account_detail.dart';
-
 import 'expense_report.dart';
 import 'expense_bar_chart.dart';
-
 import 'license.dart';
 
 class AccountSummary extends StatefulWidget {
@@ -21,9 +17,9 @@ class AccountSummary extends StatefulWidget {
 }
 
 class _AccountSummaryState extends State<AccountSummary> {
-  String _path;
   GncBook _book = GncBook();
   List<GncAccount> accountList = [];
+  final _storage = FlutterSecureStorage();
 
   @override
   void initState() {
@@ -38,49 +34,56 @@ class _AccountSummaryState extends State<AccountSummary> {
     super.dispose();
   }
 
-  Future<void> _openFileExplorer() async {
-    print("Called _openFileExplorer");
-    _book.close();
-    setState(() {
-      accountList = [];
-    });
-
-    try {
-      _path = await FilePicker.getFilePath(type: FileType.any);
-    } on PlatformException catch (e) {
-      print("Unsupported operation" + e.toString());
-    }
-    if (!mounted) {
-      print("Not mounted, returning null");
-      return null;
-    }
-
-    // save for next time
-    if (_path != null) {
-      final prefs = await SharedPreferences.getInstance();
-      prefs.setString('gnc_local_file_path', _path);
-    }
-  }
-
   Future<void> openDatabase() async {
     if (_book.isOpen) return;
 
-    // if _database is null we instantiate it
-    final prefs = await SharedPreferences.getInstance();
-    _path = prefs.getString('gnc_local_file_path');
-    if (_path == null) await _openFileExplorer();
+    String dbType = await _storage.read(key: 'dbType');
+    if (dbType == null) {
+      // Ask user the database storage type and location
+      await getDatabaseStorage();
+    }
 
-    await _book.open(_path);
-    setState(() {
-      accountList = _book.accounts();
-    });
+    // Re-read the dbType after the user interaction
+    dbType = await _storage.read(key: 'dbType');
+
+    if (dbType == 'sqlite') {
+      String dbPath = await _storage.read(key: 'dbPath');
+      await _book.sqliteOpen(dbPath);
+
+      setState(() {
+        accountList = _book.accounts();
+      });
+    } else {
+      String host = await _storage.read(key: 'host');
+      String port = await _storage.read(key: 'port');
+      String user = await _storage.read(key: 'user');
+      String password = await _storage.read(key: 'password');
+      String databaseName = await _storage.read(key: 'databaseName');
+
+      await _book.postgreOpen(
+        host: host,
+        port: int.parse(port),
+        user: user,
+        password: password,
+        databaseName: databaseName,
+      );
+
+      setState(() {
+        accountList = _book.accounts();
+      });
+    }
   }
 
-  Future<void> reopenDatabase() async {
-    setState(() {
-      accountList = [];
-    });
-    _openFileExplorer();
+  Future<void> getDatabaseStorage() async {
+    _book.close();
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoginPage(storage: _storage),
+      ),
+    );
+
     openDatabase();
   }
 
@@ -109,10 +112,10 @@ class _AccountSummaryState extends State<AccountSummary> {
               child: Text("Moneybags"),
             ),
             ListTile(
-              title: Text('Select file'),
+              title: Text('Open database'),
               onTap: () {
-                reopenDatabase();
                 Navigator.pop(context);
+                getDatabaseStorage();
               },
             ),
             ExpansionTile(

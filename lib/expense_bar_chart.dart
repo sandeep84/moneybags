@@ -63,8 +63,8 @@ class ExpenseBarChartState extends State<ExpenseBarChart> {
         monthNames[month] = DateFormat.MMM().format(startDate);
         final accList = accountSummaryByType(
             accountType: 'EXPENSE',
-            startDate: startDate.toString(),
-            endDate: endDate.toString(),
+            startDate: startDate,
+            endDate: endDate,
             numDetailedAccounts: 5,
             reportCommodity: widget.book.baseCurrency,
             rootAccount: widget.book.rootAccount);
