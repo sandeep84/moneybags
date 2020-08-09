@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class LoginPage extends StatefulWidget {
   final FlutterSecureStorage storage;
@@ -32,10 +33,8 @@ class _LoginPageState extends State<LoginPage> {
 
       String dbPath;
       try {
-        dbPath = await FilePicker.getFilePath(type: FileType.any);
-        if (!mounted) {
-          print("Not mounted, returning null");
-          return null;
+        if (await Permission.storage.request().isGranted) {
+          dbPath = await FilePicker.getFilePath(type: FileType.any);
         }
       } on PlatformException catch (e) {
         print("Unsupported operation" + e.toString());
